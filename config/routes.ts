@@ -6,14 +6,13 @@
   },
   {
     path: '/admin',
-    name: '管理页',
+    name: '接口管理',
     icon: 'crown',
     access: 'canAdmin',
     routes: [
-      { path: '/admin', redirect: '/admin/sub-page' },
-      { path: '/admin/sub-page', name: '二级管理页', component: './Admin' },
+      { path: '/admin', redirect: '/admin/list' },
+      { name: '查询表格', icon: 'table', path: '/admin/list', component: './TableList' },
     ],
   },
-  { name: '查询表格', icon: 'table', path: '/list', component: './TableList' },
   { path: '*', layout: false, component: './404' },
 ];

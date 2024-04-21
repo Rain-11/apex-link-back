@@ -1,14 +1,7 @@
-import {
-  ProFormDateTimePicker,
-  ProFormRadio,
-  ProFormSelect,
-  ProFormText,
-  ProFormTextArea,
-  StepsForm,
-} from '@ant-design/pro-components';
+import { ProColumns, ProFormInstance, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
 import { Modal } from 'antd';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export type FormValueType = {
   target?: string;
@@ -16,143 +9,44 @@ export type FormValueType = {
   type?: string;
   time?: string;
   frequency?: string;
-} & Partial<API.RuleListItem>;
+} & Partial<API.InterfaceInfoVo>;
 export type UpdateFormProps = {
-  onCancel: (flag?: boolean, formVals?: FormValueType) => void;
-  onSubmit: (values: FormValueType) => Promise<void>;
+  onCancel: (flag?: boolean) => void;
   updateModalOpen: boolean;
-  values: Partial<API.RuleListItem>;
+  columns: ProColumns<API.InterfaceInfoVo>[];
+  onSubmit: (values: FormValueType) => Promise<void>;
+  values: API.InterfaceInfoVo;
 };
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+  const formRef = useRef<ProFormInstance>();
+  useEffect(() => {
+    formRef.current?.setFieldsValue({
+      ...props.values,
+      status: 1 ? '启用' : '禁用',
+    });
+  }, [props.values]);
   return (
-    <StepsForm
-      stepsProps={{
-        size: 'small',
+    <Modal
+      title={'修改接口信息'}
+      width="400px"
+      open={props.updateModalOpen}
+      onCancel={() => {
+        props.onCancel(false);
       }}
-      stepsFormRender={(dom, submitter) => {
-        return (
-          <Modal
-            width={640}
-            styles={{
-              body: {
-                padding: '32px 40px 48px',
-              },
-            }}
-            destroyOnClose
-            title={'规则配置'}
-            open={props.updateModalOpen}
-            footer={submitter}
-            onCancel={() => {
-              props.onCancel();
-            }}
-          >
-            {dom}
-          </Modal>
-        );
-      }}
-      onFinish={props.onSubmit}
+      footer={null}
     >
-      <StepsForm.StepForm
-        initialValues={{
-          name: props.values.name,
-          desc: props.values.desc,
+      <ProTable
+        formRef={formRef}
+        type={'form'}
+        columns={props.columns}
+        onSubmit={async (values) => {
+          props.onSubmit(values);
         }}
-        title={'基本信息'}
-      >
-        <ProFormText
-          name="name"
-          label={'规则名称'}
-          width="md"
-          rules={[
-            {
-              required: true,
-              message: '请输入规则名称！',
-            },
-          ]}
-        />
-        <ProFormTextArea
-          name="desc"
-          width="md"
-          label={'规则描述'}
-          placeholder={'请输入至少五个字符'}
-          rules={[
-            {
-              required: true,
-              message: '请输入至少五个字符的规则描述！',
-              min: 5,
-            },
-          ]}
-        />
-      </StepsForm.StepForm>
-      <StepsForm.StepForm
-        initialValues={{
-          target: '0',
-          template: '0',
+        form={{
+          initialValues: props.values,
         }}
-        title={'配置规则属性'}
-      >
-        <ProFormSelect
-          name="target"
-          width="md"
-          label={'监控对象'}
-          valueEnum={{
-            0: '表一',
-            1: '表二',
-          }}
-        />
-        <ProFormSelect
-          name="template"
-          width="md"
-          label={'规则模板'}
-          valueEnum={{
-            0: '规则模板一',
-            1: '规则模板二',
-          }}
-        />
-        <ProFormRadio.Group
-          name="type"
-          label={'规则类型'}
-          options={[
-            {
-              value: '0',
-              label: '强',
-            },
-            {
-              value: '1',
-              label: '弱',
-            },
-          ]}
-        />
-      </StepsForm.StepForm>
-      <StepsForm.StepForm
-        initialValues={{
-          type: '1',
-          frequency: 'month',
-        }}
-        title={'设定调度周期'}
-      >
-        <ProFormDateTimePicker
-          name="time"
-          width="md"
-          label={'开始时间'}
-          rules={[
-            {
-              required: true,
-              message: '请选择开始时间！',
-            },
-          ]}
-        />
-        <ProFormSelect
-          name="frequency"
-          label={'监控对象'}
-          width="md"
-          valueEnum={{
-            month: '月',
-            week: '周',
-          }}
-        />
-      </StepsForm.StepForm>
-    </StepsForm>
+      />
+    </Modal>
   );
 };
 export default UpdateForm;

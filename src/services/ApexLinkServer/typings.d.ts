@@ -11,6 +11,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseInterfaceInfoVo = {
+    code?: number;
+    data?: InterfaceInfoVo;
+    message?: string;
+  };
+
   type BaseResponseLoginUserVO = {
     code?: number;
     data?: LoginUserVO;
@@ -20,6 +26,12 @@ declare namespace API {
   type BaseResponseLong = {
     code?: number;
     data?: number;
+    message?: string;
+  };
+
+  type BaseResponsePageInterfaceInfoVo = {
+    code?: number;
+    data?: PageInterfaceInfoVo;
     message?: string;
   };
 
@@ -47,6 +59,20 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseVoid = {
+    code?: number;
+    data?: Record<string, any>;
+    message?: string;
+  };
+
+  type batchDeletionParams = {
+    ids: number[];
+  };
+
+  type deleteInterfaceBasedOnIDParams = {
+    deleteRequest: DeleteRequest;
+  };
+
   type DeleteRequest = {
     id?: number;
   };
@@ -57,6 +83,55 @@ declare namespace API {
 
   type getUserVOByIdParams = {
     id: number;
+  };
+
+  type InterfaceAddDto = {
+    name?: string;
+    url?: string;
+    detail?: string;
+    requestHeader?: string;
+    responseHeader?: string;
+    method?: string;
+  };
+
+  type InterfaceInfoVo = {
+    id?: number;
+    name?: string;
+    url?: string;
+    detail?: string;
+    requestHeader?: string;
+    responseHeader?: string;
+    status?: number;
+    method?: string;
+    userName?: string;
+    userId?: number;
+    createTime?: string;
+    updateTime?: string;
+    isDelete?: number;
+  };
+
+  type InterfaceQueryDto = {
+    current?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+    id?: number;
+    name?: string;
+    url?: string;
+    detail?: string;
+    requestHeader?: string;
+    responseHeader?: string;
+    method?: string;
+  };
+
+  type InterfaceUpdateDto = {
+    id?: number;
+    name?: string;
+    url?: string;
+    detail?: string;
+    requestHeader?: string;
+    responseHeader?: string;
+    method?: string;
   };
 
   type LoginUserVO = {
@@ -72,6 +147,20 @@ declare namespace API {
   type OrderItem = {
     column?: string;
     asc?: boolean;
+  };
+
+  type PageInterfaceInfoVo = {
+    records?: InterfaceInfoVo[];
+    total?: number;
+    size?: number;
+    current?: number;
+    orders?: OrderItem[];
+    optimizeCountSql?: boolean;
+    searchCount?: boolean;
+    optimizeJoinOfCountSql?: boolean;
+    countId?: string;
+    maxLimit?: number;
+    pages?: number;
   };
 
   type PageUser = {
@@ -100,6 +189,10 @@ declare namespace API {
     countId?: string;
     maxLimit?: number;
     pages?: number;
+  };
+
+  type queryInterfaceBasedOnIDParams = {
+    id: string;
   };
 
   type sendVerificationCodeParams = {
