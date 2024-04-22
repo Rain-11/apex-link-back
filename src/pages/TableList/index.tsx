@@ -4,6 +4,8 @@ import {
   batchDeletion,
   deleteInterfaceBasedOnId,
   modifyInterfaceInformation,
+  offlineInterface,
+  publishingInterface,
 } from '@/services/ApexLinkServer/jiekouxinxikongzhiqi';
 import { rule } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
@@ -17,7 +19,8 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Drawer, message } from 'antd';
+import { Button, Drawer, Switch, message } from 'antd';
+import { throttle } from 'lodash';
 import qs from 'qs';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm';
@@ -124,6 +127,7 @@ const TableList: React.FC = () => {
     {
       title: 'id',
       dataIndex: 'id',
+      hideInForm: true,
     },
     {
       title: '接口名',
@@ -164,17 +168,33 @@ const TableList: React.FC = () => {
       disable: true,
       title: '状态',
       dataIndex: 'status',
-      valueType: 'select',
-      valueEnum: {
-        0: {
-          text: '禁用',
-          status: 'Error',
-        },
-        1: {
-          text: '启用',
-          status: 'Success',
-        },
-      },
+      valueType: 'switch',
+      render: (_, record) => [
+        <Switch
+          key="switch"
+          checkedChildren="开启"
+          unCheckedChildren="关闭"
+          checked={record.status === 1}
+          onChange={async (checked: boolean) => {
+            if (checked) {
+              const result = await publishingInterface({
+                id: record.id,
+              });
+              if (result.code === 20000) {
+                message.success('发布成功');
+              }
+            } else {
+              const result = await offlineInterface({
+                id: record.id,
+              });
+              if (result.code === 20000) {
+                message.success('下线成功');
+              }
+            }
+            actionRef.current?.reload();
+          }}
+        />,
+      ],
     },
     {
       title: '请求方式',
@@ -334,13 +354,15 @@ const TableList: React.FC = () => {
         onCancel={(value) => {
           handleModalOpen(value as boolean);
         }}
-        onSubmit={async (value) => {
-          const success = await handleAdd(value);
-          if (success) {
-            handleModalOpen(false);
-            actionRef.current?.reload();
-          }
-        }}
+        onSubmit={
+          throttle(async (value) => {
+            const success = await handleAdd(value);
+            if (success) {
+              handleModalOpen(false);
+              actionRef.current?.reload();
+            }
+          }) as (values: FormValueType) => Promise<void>
+        }
         createModalOpen={createModalOpen}
         columns={columns}
       />

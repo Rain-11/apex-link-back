@@ -6,12 +6,22 @@
   },
   {
     path: '/admin',
-    name: '接口管理',
+    name: '管理页面',
     icon: 'crown',
     access: 'canAdmin',
     routes: [
       { path: '/admin', redirect: '/admin/list' },
-      { name: '查询表格', icon: 'table', path: '/admin/list', component: './TableList' },
+      { name: '接口管理', icon: 'table', path: '/admin/list', component: './TableList' },
+      { path: '/admin/UserManager', name: '用户管理', component: './UserManager' },
+    ],
+  },
+  {
+    path: '/home',
+    name: '接口信息',
+    icon: 'CloudOutlined',
+    routes: [
+      { path: '/home', redirect: '/home/list' },
+      { name: '接口列表', icon: 'table', path: '/home/list', component: './Home' },
     ],
   },
   { path: '*', layout: false, component: './404' },

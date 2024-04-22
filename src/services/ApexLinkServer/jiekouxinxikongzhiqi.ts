@@ -61,6 +61,21 @@ export async function modifyInterfaceInformation(
   });
 }
 
+/** 下线接口 POST /interface/offlineInterface */
+export async function offlineInterface(
+  body: API.InterfaceStatusDto,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseVoid>('/interface/offlineInterface', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 分页查询接口信息 POST /interface/pagingQueryInterfaceInformation */
 export async function pagingQueryInterfaceInformation(
   body: API.InterfaceQueryDto,
@@ -77,6 +92,21 @@ export async function pagingQueryInterfaceInformation(
       ...(options || {}),
     },
   );
+}
+
+/** 上线接口 PUT /interface/publishingInterface */
+export async function publishingInterface(
+  body: API.InterfaceStatusDto,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseVoid>('/interface/publishingInterface', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** 根据id获取接口信息 GET /interface/queryInterfaceBasedOnID/${param0} */

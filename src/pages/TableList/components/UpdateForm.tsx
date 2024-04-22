@@ -22,7 +22,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   useEffect(() => {
     formRef.current?.setFieldsValue({
       ...props.values,
-      status: 1 ? '启用' : '禁用',
     });
   }, [props.values]);
   return (
@@ -40,7 +39,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         type={'form'}
         columns={props.columns}
         onSubmit={async (values) => {
-          props.onSubmit(values);
+          props.onSubmit({ ...values, id: props.values.id });
         }}
         form={{
           initialValues: props.values,

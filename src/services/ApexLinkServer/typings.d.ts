@@ -122,6 +122,11 @@ declare namespace API {
     requestHeader?: string;
     responseHeader?: string;
     method?: string;
+    status?: number;
+  };
+
+  type InterfaceStatusDto = {
+    id?: number;
   };
 
   type InterfaceUpdateDto = {
@@ -132,6 +137,7 @@ declare namespace API {
     requestHeader?: string;
     responseHeader?: string;
     method?: string;
+    status?: number;
   };
 
   type LoginUserVO = {
