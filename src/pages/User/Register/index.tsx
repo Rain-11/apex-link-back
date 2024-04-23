@@ -51,7 +51,6 @@ const useStyles = createStyles(({ token }) => {
 });
 const Register: React.FC = () => {
   const [type, setType] = useState<string>('account');
-  const [codeLoading, setCodeLoading] = useState<boolean>(false);
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const [isTim, setIsTim] = useState<boolean>(false);
@@ -84,18 +83,16 @@ const Register: React.FC = () => {
   };
 
   const obtainVerificationCode = async () => {
-    if (formRef.current?.isFieldsValidating()) {
-      setCodeLoading(true);
+    if (formRef.current?.getFieldValue('email')) {
       const res = await sendVerificationCode({
         email: formRef.current!.getFieldValue('email'),
       });
-      if (res.code === 0 && res.data) {
+      if (res.code === 20000 && res.data) {
         message.success('获取验证码成功');
         setIsTim(!isTim);
       }
-      setCodeLoading(false);
     } else {
-      message.error('未通过校验');
+      message.error('请填写邮箱');
     }
   };
   useEffect(() => {
@@ -186,7 +183,7 @@ const Register: React.FC = () => {
                   },
                 ]}
               />
-              <Flex gap={'small'}>
+              <Flex gap={'small'} align="baseline">
                 <ProFormText
                   name="code"
                   fieldProps={{
@@ -206,9 +203,15 @@ const Register: React.FC = () => {
                     },
                   ]}
                 />
-                <Button size="large" onClick={obtainVerificationCode} loading={codeLoading}>
-                  {isTim ? `已发送(${tim})` : '获取验证码'}
-                </Button>
+                {isTim ? (
+                  <>已发送({tim})</>
+                ) : (
+                  <>
+                    <Button size="large" onClick={obtainVerificationCode}>
+                      获取验证码
+                    </Button>
+                  </>
+                )}
               </Flex>
             </>
           )}
