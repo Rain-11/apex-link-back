@@ -1,11 +1,16 @@
 import { Footer } from '@/components';
-import { userLogin } from '@/services/ApexLinkServer/yonghujiekou';
+import { sendVerificationCode, userLogin } from '@/services/ApexLinkServer/yonghujiekou';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { Helmet, Link, history, useModel } from '@umijs/max';
-import { Tabs, message } from 'antd';
+import {
+  LoginForm,
+  ProFormCheckbox,
+  ProFormInstance,
+  ProFormText,
+} from '@ant-design/pro-components';
+import { Helmet, history, useModel } from '@umijs/max';
+import { Button, Flex, Tabs, message } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
 
@@ -44,10 +49,14 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [type, setType] = useState<string>('account');
+  const [codeLoading, setCodeLoading] = useState<boolean>(false);
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
+  const [isTim, setIsTim] = useState<boolean>(false);
+  const [tim, setTim] = useState<number>(60);
+  const formRef = useRef<ProFormInstance>();
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
@@ -59,28 +68,53 @@ const Login: React.FC = () => {
       });
     }
   };
-  const handleSubmit = async (values: API.UserLoginRequest) => {
-    try {
-      // 登录
-      const msg = await userLogin({
-        ...values,
+  const handleSubmit = async (values: API.UserRegisterRequest) => {
+    const msg = await userLogin({
+      ...values,
+    });
+    if (msg.message === 'ok') {
+      const defaultLoginSuccessMessage = '登录成功！';
+      message.success(defaultLoginSuccessMessage);
+      await fetchUserInfo();
+      const urlParams = new URL(window.location.href).searchParams;
+      history.push(urlParams.get('redirect') || '/');
+      return;
+    }
+    console.log(msg);
+  };
+
+  const obtainVerificationCode = async () => {
+    if (formRef.current?.isFieldsValidating()) {
+      setCodeLoading(true);
+      const res = await sendVerificationCode({
+        email: formRef.current!.getFieldValue('email'),
       });
-      if (msg.message === 'ok') {
-        const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
+      if (res.code === 0 && res.data) {
+        message.success('获取验证码成功');
+        setIsTim(!isTim);
       }
-      console.log(msg);
-      // 如果失败去设置用户错误信息
-    } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      console.log(error);
-      message.error(defaultLoginFailureMessage);
+      setCodeLoading(false);
+    } else {
+      message.error('未通过校验');
     }
   };
+  useEffect(() => {
+    let timer: number;
+    if (isTim) {
+      // @ts-ignore
+      timer = setInterval(() => {
+        if (tim <= 0) {
+          clearInterval(timer);
+          setIsTim(!isTim);
+          setTim(60);
+          return;
+        }
+        setTim((tim) => tim - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [tim, isTim]);
+
   return (
     <div className={styles.container}>
       <Helmet>
@@ -95,6 +129,7 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          formRef={formRef}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
@@ -106,7 +141,7 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginRequest);
+            await handleSubmit(values as API.UserRegisterRequest);
           }}
         >
           <Tabs
@@ -116,7 +151,7 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '邮箱登录',
+                label: '邮箱注册',
               },
             ]}
           />
@@ -151,6 +186,30 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+              <Flex gap={'small'}>
+                <ProFormText
+                  name="code"
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined />,
+                  }}
+                  placeholder={'请填写验证码'}
+                  rules={[
+                    {
+                      required: true,
+                      message: '验证码是必填项！',
+                    },
+                    {
+                      min: 5,
+                      max: 5,
+                      message: '验证码长度为5！',
+                    },
+                  ]}
+                />
+                <Button size="large" onClick={obtainVerificationCode} loading={codeLoading}>
+                  {isTim ? `已发送(${tim})` : '获取验证码'}
+                </Button>
+              </Flex>
             </>
           )}
           <div
@@ -161,18 +220,15 @@ const Login: React.FC = () => {
             <ProFormCheckbox noStyle name="autoLogin">
               自动登录
             </ProFormCheckbox>
-
-            <Link
-              to="/user/register"
+            <a
               style={{
                 float: 'right',
               }}
             >
               忘记密码 ?
-            </Link>
+            </a>
             <br />
-            <Link
-              to="/user/register"
+            <a
               style={{
                 marginTop: '5px',
                 marginBottom: '5px',
@@ -180,7 +236,7 @@ const Login: React.FC = () => {
               }}
             >
               没有账号？去注册
-            </Link>
+            </a>
           </div>
         </LoginForm>
       </div>
@@ -188,4 +244,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default Register;
