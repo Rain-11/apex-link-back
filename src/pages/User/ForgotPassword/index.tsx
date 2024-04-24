@@ -1,12 +1,12 @@
 import { Footer } from '@/components';
-import { userLogin } from '@/services/ApexLinkServer/yonghujiekou';
+import { useTimer } from '@/hooks/useTimer';
+import { forgotPasswordDto } from '@/services/ApexLinkServer/yonghujiekou';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { Helmet, Link, history, useModel } from '@umijs/max';
-import { Tabs, message } from 'antd';
+import { LoginForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
+import { Helmet, Link, history } from '@umijs/max';
+import { Button, Flex, Tabs, message } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useState } from 'react';
-import { flushSync } from 'react-dom';
+import React, { useRef, useState } from 'react';
 import Settings from '../../../../config/defaultSettings';
 
 const useStyles = createStyles(({ token }) => {
@@ -44,43 +44,28 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const Login: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      flushSync(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: userInfo,
-        }));
-      });
+  const formRef = useRef<ProFormInstance>();
+  const [codeLoading, setCodeLoading] = useState<boolean>(false);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const { isTim, tim, obtainVerificationCode } = useTimer(formRef, setCodeLoading);
+
+  const handleSubmit = async (values: API.ForgotPasswordDto) => {
+    setSubmitLoading(true);
+    const msg = await forgotPasswordDto({
+      forgotPasswordDto: values,
+    });
+    if (msg.code === 20000) {
+      const defaultLoginSuccessMessage = '修改密码成功！';
+      message.success(defaultLoginSuccessMessage);
+      history.push('/user/login');
+      return;
     }
+    setSubmitLoading(false);
   };
-  const handleSubmit = async (values: API.UserLoginRequest) => {
-    try {
-      // 登录
-      const msg = await userLogin({
-        ...values,
-      });
-      if (msg.message === 'ok') {
-        const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
-      }
-      console.log(msg);
-      // 如果失败去设置用户错误信息
-    } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      console.log(error);
-      message.error(defaultLoginFailureMessage);
-    }
-  };
+
   return (
     <div className={styles.container}>
       <Helmet>
@@ -95,18 +80,19 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          loading={submitLoading}
+          submitter={{ searchConfig: { submitText: '修改密码' } }}
+          formRef={formRef}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={'Api开放平台管理系统'}
+          title="忘记密码"
           initialValues={{
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginRequest);
+            await handleSubmit(values as API.ForgotPasswordDto);
           }}
         >
           <Tabs
@@ -116,7 +102,7 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '邮箱登录',
+                label: '验证邮箱',
               },
             ]}
           />
@@ -137,13 +123,48 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+              <Flex gap={'small'} align="baseline">
+                <ProFormText
+                  name="code"
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined />,
+                  }}
+                  placeholder={'请填写验证码'}
+                  rules={[
+                    {
+                      required: true,
+                      message: '验证码是必填项！',
+                    },
+                    {
+                      min: 5,
+                      max: 5,
+                      message: '验证码长度为5！',
+                    },
+                  ]}
+                />
+                {isTim ? (
+                  <>已发送({tim})</>
+                ) : (
+                  <>
+                    <Button
+                      size="large"
+                      onClick={obtainVerificationCode}
+                      loading={codeLoading}
+                      disabled={codeLoading as boolean}
+                    >
+                      获取验证码
+                    </Button>
+                  </>
+                )}
+              </Flex>
               <ProFormText.Password
                 name="userPassword"
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                placeholder={'请输入密码'}
+                placeholder={'请输入新密码'}
                 rules={[
                   {
                     required: true,
@@ -155,13 +176,9 @@ const Login: React.FC = () => {
           )}
           <div
             style={{
-              marginBottom: 24,
+              marginBottom: 10,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-
             <Link
               to="/user/forgotPassword"
               style={{
@@ -171,16 +188,6 @@ const Login: React.FC = () => {
               忘记密码 ?
             </Link>
             <br />
-            <Link
-              to="/user/register"
-              style={{
-                marginTop: '5px',
-                marginBottom: '5px',
-                float: 'right',
-              }}
-            >
-              没有账号？去注册
-            </Link>
           </div>
         </LoginForm>
       </div>
@@ -188,4 +195,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default ForgotPassword;

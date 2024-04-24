@@ -9,6 +9,11 @@
         path: '/user/register',
         component: './User/Register',
       },
+      {
+        name: '忘记密码',
+        path: '/user/forgotPassword',
+        component: './User/ForgotPassword',
+      },
     ],
   },
   {

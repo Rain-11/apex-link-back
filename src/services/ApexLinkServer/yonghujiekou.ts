@@ -40,6 +40,23 @@ export async function sendVerificationCode(
   });
 }
 
+/** 忘记密码 GET /user/forgotPassword */
+export async function forgotPasswordDto(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.ForgotPasswordDtoParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseVoid>('/user/forgotPassword', {
+    method: 'GET',
+    params: {
+      ...params,
+      forgotPasswordDto: undefined,
+      ...params['forgotPasswordDto'],
+    },
+    ...(options || {}),
+  });
+}
+
 /** 根据 id 获取用户 仅限管理员 GET /user/get */
 export async function getUserById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

@@ -77,6 +77,16 @@ declare namespace API {
     id?: number;
   };
 
+  type ForgotPasswordDto = {
+    email?: string;
+    userPassword?: string;
+    verificationCode?: string;
+  };
+
+  type ForgotPasswordDtoParams = {
+    forgotPasswordDto: ForgotPasswordDto;
+  };
+
   type getUserByIdParams = {
     id: number;
   };
