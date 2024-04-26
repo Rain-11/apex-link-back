@@ -8,7 +8,7 @@ type BaseResponse = {
   message?: string;
 };
 export const requestConfig: RequestConfig = {
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:9001/api',
   //允许携带cookie
   withCredentials: true,
   // 请求拦截器

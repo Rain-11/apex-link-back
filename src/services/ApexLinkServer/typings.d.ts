@@ -47,6 +47,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseSignatureAuthenticationVo = {
+    code?: number;
+    data?: SignatureAuthenticationVo;
+    message?: string;
+  };
+
   type BaseResponseUser = {
     code?: number;
     data?: User;
@@ -69,6 +75,12 @@ declare namespace API {
     ids: number[];
   };
 
+  type ChangePasswordDto = {
+    userPassword?: string;
+    verifyPassword?: string;
+    verificationCode?: string;
+  };
+
   type deleteInterfaceBasedOnIDParams = {
     deleteRequest: DeleteRequest;
   };
@@ -81,10 +93,6 @@ declare namespace API {
     email?: string;
     userPassword?: string;
     verificationCode?: string;
-  };
-
-  type ForgotPasswordDtoParams = {
-    forgotPasswordDto: ForgotPasswordDto;
   };
 
   type getUserByIdParams = {
@@ -152,6 +160,7 @@ declare namespace API {
 
   type LoginUserVO = {
     id?: number;
+    email?: string;
     userName?: string;
     userAvatar?: string;
     userProfile?: string;
@@ -215,6 +224,11 @@ declare namespace API {
     email: string;
   };
 
+  type SignatureAuthenticationVo = {
+    secretKey?: string;
+    secretId?: string;
+  };
+
   type User = {
     id?: number;
     userPassword?: string;
@@ -222,6 +236,8 @@ declare namespace API {
     userAvatar?: string;
     email?: string;
     userProfile?: string;
+    secretKey?: string;
+    secretId?: string;
     userRole?: string;
     createTime?: string;
     updateTime?: string;
@@ -274,6 +290,7 @@ declare namespace API {
 
   type UserVO = {
     id?: number;
+    email?: string;
     userName?: string;
     userAvatar?: string;
     userProfile?: string;

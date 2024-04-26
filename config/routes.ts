@@ -36,5 +36,15 @@
       { name: '接口列表', icon: 'table', path: '/home/list', component: './Home' },
     ],
   },
+  {
+    path: '/',
+    redirect: '/home',
+  },
+  {
+    name: '个人信息',
+    path: '/user/personalInformation',
+    component: './User/PersonalInformation',
+    hideInMenu: true,
+  },
   { path: '*', layout: false, component: './404' },
 ];

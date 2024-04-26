@@ -55,7 +55,7 @@ const ForgotPassword: React.FC = () => {
   const handleSubmit = async (values: API.ForgotPasswordDto) => {
     setSubmitLoading(true);
     const msg = await forgotPasswordDto({
-      forgotPasswordDto: values,
+      ...values,
     });
     if (msg.code === 20000) {
       const defaultLoginSuccessMessage = '修改密码成功！';

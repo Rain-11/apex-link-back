@@ -132,6 +132,7 @@ export default defineConfig({
       // 或者使用在线的版本
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
       schemaPath: "http://localhost:8080/v3/api-docs",
+      // schemaPath: join(__dirname, 'oneapi.json'),
       mock: false,
       projectName:"ApexLinkServer"
     },

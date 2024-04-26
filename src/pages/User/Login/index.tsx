@@ -100,7 +100,7 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
+          title="ApexLink"
           subTitle={'Api开放平台管理系统'}
           initialValues={{
             autoLogin: true,

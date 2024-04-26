@@ -10,6 +10,7 @@ export function useTimer(
 ) {
   const [isTim, setIsTim] = useState<boolean>(false);
   const [tim, setTim] = useState<number>(60);
+  const [code, setCode] = useState<number>(0);
   const obtainVerificationCode = useCallback(
     throttle(
       async () => {
@@ -19,6 +20,7 @@ export function useTimer(
             email: formRef.current!.getFieldValue('email'),
           });
           if (res.code === 20000 && res.data) {
+            setCode(res.data)
             message.success('获取验证码成功');
             setIsTim(!isTim);
           }
@@ -56,5 +58,6 @@ export function useTimer(
     obtainVerificationCode,
     isTim,
     tim,
+    code
   };
 }
