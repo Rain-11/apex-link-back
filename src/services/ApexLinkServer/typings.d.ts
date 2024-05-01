@@ -1,4 +1,10 @@
 declare namespace API {
+  type BaseResponse = {
+    code?: number;
+    data?: Record<string, any>;
+    message?: string;
+  };
+
   type BaseResponseBoolean = {
     code?: number;
     data?: boolean;
@@ -89,6 +95,11 @@ declare namespace API {
     id?: number;
   };
 
+  type ExecutionGoalsDto = {
+    id?: number;
+    body?: string;
+  };
+
   type ForgotPasswordDto = {
     email?: string;
     userPassword?: string;
@@ -109,16 +120,21 @@ declare namespace API {
     detail?: string;
     requestHeader?: string;
     responseHeader?: string;
+    params?: string;
     method?: string;
+    requestDataType?: string;
   };
 
   type InterfaceInfoVo = {
     id?: number;
     name?: string;
+    host?: string;
     url?: string;
     detail?: string;
     requestHeader?: string;
     responseHeader?: string;
+    requestDataType?: string;
+    params?: string;
     status?: number;
     method?: string;
     userName?: string;
@@ -154,6 +170,7 @@ declare namespace API {
     detail?: string;
     requestHeader?: string;
     responseHeader?: string;
+    params?: string;
     method?: string;
     status?: number;
   };
@@ -165,6 +182,7 @@ declare namespace API {
     userAvatar?: string;
     userProfile?: string;
     userRole?: string;
+    wallet?: number;
     createTime?: string;
     updateTime?: string;
   };
@@ -239,6 +257,7 @@ declare namespace API {
     secretKey?: string;
     secretId?: string;
     userRole?: string;
+    wallet?: number;
     createTime?: string;
     updateTime?: string;
     isDelete?: number;
@@ -292,6 +311,7 @@ declare namespace API {
     id?: number;
     email?: string;
     userName?: string;
+    wallet?: number;
     userAvatar?: string;
     userProfile?: string;
     userRole?: string;

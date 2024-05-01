@@ -1,7 +1,7 @@
 import ChangePassword from '@/pages/User/PersonalInformation/components/ChangePassword';
 import { generateAccessKey } from '@/services/ApexLinkServer/yonghujiekou';
 import { useModel } from '@@/exports';
-import { Avatar, Card, Col, Flex, message, Modal, Row } from 'antd';
+import { Avatar, Card, Col, Flex, Modal, Row } from 'antd';
 import React, { useState } from 'react';
 
 const tabListNoTitle = [

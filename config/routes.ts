@@ -23,7 +23,7 @@
     access: 'canAdmin',
     routes: [
       { path: '/admin', redirect: '/admin/list' },
-      { name: '接口管理', icon: 'table', path: '/admin/list', component: './TableList' },
+      { name: '接口管理', path: '/admin/list', component: './TableList' },
       { path: '/admin/UserManager', name: '用户管理', component: './UserManager' },
     ],
   },
@@ -33,7 +33,13 @@
     icon: 'CloudOutlined',
     routes: [
       { path: '/home', redirect: '/home/list' },
-      { name: '接口列表', icon: 'table', path: '/home/list', component: './Home' },
+      { name: '接口列表', path: '/home/list', component: './Home' },
+      {
+        name: '接口详情',
+        path: '/home/interfaceDetails/:id',
+        hideInMenu: true,
+        component: './Home/InterfaceDetails',
+      },
     ],
   },
   {

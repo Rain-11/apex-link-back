@@ -128,18 +128,38 @@ const TableList: React.FC = () => {
       title: 'id',
       dataIndex: 'id',
       hideInForm: true,
+      width: 30,
     },
     {
       title: '接口名',
       copyable: true,
-      ellipsis: true,
-      tooltip: '接口名过长会自动收缩',
       dataIndex: 'name',
+    },
+    {
+      title: '请求域名',
+      copyable: true,
+      dataIndex: 'host',
     },
     {
       title: '请求地址',
       copyable: true,
       dataIndex: 'url',
+    },
+    {
+      title: '请求参数类型',
+      copyable: true,
+      dataIndex: 'requestDataType',
+      valueType: 'select',
+      valueEnum: {
+        JSON: {
+          text: 'application/json',
+          status: 'Success',
+        },
+        FORM: {
+          text: 'application/x-www-form-urlencoded',
+          status: 'Success',
+        },
+      },
     },
     {
       title: '接口描述',
@@ -151,17 +171,15 @@ const TableList: React.FC = () => {
     {
       title: '请求头',
       copyable: true,
-      ellipsis: true,
-      tooltip: '请求头过长会自动收缩',
       hideInSearch: true,
+      valueType: 'jsonCode',
       dataIndex: 'requestHeader',
     },
     {
       title: '响应头',
       copyable: true,
-      ellipsis: true,
-      tooltip: '响应头过长会自动收缩',
       hideInSearch: true,
+      valueType: 'jsonCode',
       dataIndex: 'responseHeader',
     },
     {
@@ -169,6 +187,7 @@ const TableList: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       valueType: 'switch',
+      hideInForm: true,
       render: (_, record) => [
         <Switch
           key="switch"
