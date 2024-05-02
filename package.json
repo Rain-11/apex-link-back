@@ -53,6 +53,7 @@
     "antd-style": "^3.6.1",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
+    "echarts": "^5.5.0",
     "omit.js": "^2.0.2",
     "querystring": "^0.2.1",
     "rc-menu": "^9.12.4",

@@ -100,8 +100,10 @@ const DebuggingInterface: React.FC<{
       id: interfaceInfo.id,
       body: JSON.stringify(params),
     });
-    message.success('调用成功');
-    setResult(res);
+    if (res.code === 20000) {
+      message.success('调用成功');
+      setResult(res);
+    }
   };
   return (
     <>

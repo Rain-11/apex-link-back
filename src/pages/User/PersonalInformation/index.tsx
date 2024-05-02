@@ -1,7 +1,7 @@
 import ChangePassword from '@/pages/User/PersonalInformation/components/ChangePassword';
 import { generateAccessKey } from '@/services/ApexLinkServer/yonghujiekou';
 import { useModel } from '@@/exports';
-import { Avatar, Card, Col, Flex, Modal, Row } from 'antd';
+import { Avatar, Button, Card, Col, Flex, Modal, Row, Tooltip } from 'antd';
 import React, { useState } from 'react';
 
 const tabListNoTitle = [
@@ -12,6 +12,10 @@ const tabListNoTitle = [
   {
     key: 'modifyMiami',
     label: '修改密码',
+  },
+  {
+    key: 'wallet',
+    label: '我的钱包',
   },
 ];
 const PersonalInformation: React.FC = () => {
@@ -47,6 +51,20 @@ const PersonalInformation: React.FC = () => {
   const contentListNoTitle: Record<string, React.ReactNode> = {
     accountSecurity: <a onClick={getAccessKey}>生成访问秘钥</a>,
     modifyMiami: <ChangePassword />,
+    wallet: (
+      <>
+        <Card title="我的钱包" bordered={true} style={{ width: '100%', fontWeight: 'bolder' }}>
+          <p>
+            <Tooltip title="一金币可以调用一次接口">
+              金币余额： <span>{initialState?.currentUser?.wallet}</span>
+            </Tooltip>
+          </p>
+          <p>
+            获取更多： <Button size="small">每日签到</Button>
+          </p>
+        </Card>
+      </>
+    ),
   };
   return (
     <>
@@ -85,7 +103,7 @@ const PersonalInformation: React.FC = () => {
               </Col>
             </Row>
             <Row>
-              <Col>邮箱:{initialState!.currentUser!.email}</Col>
+              <Col>邮箱： {initialState!.currentUser!.email}</Col>
             </Row>
             <Row></Row>
             <Row></Row>
